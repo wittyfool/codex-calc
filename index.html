@@ -7,8 +7,8 @@
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
-    <main class="app" aria-label="電卓">
-      <section class="calculator" aria-label="計算機">
+    <main class="app" aria-label="Calculator app">
+      <section class="calculator" aria-label="Calculator">
         <div class="display" aria-live="polite">
           <div class="expression" id="expression">&nbsp;</div>
           <output class="value" id="display">0</output>
@@ -16,28 +16,29 @@
 
         <div class="keys">
           <button class="key key-muted" type="button" data-action="clear">AC</button>
+          <button class="key key-muted" type="button" data-action="sqrt" aria-label="Square root">&radic;</button>
           <button class="key key-muted" type="button" data-action="toggle-sign">+/-</button>
           <button class="key key-muted" type="button" data-action="percent">%</button>
-          <button class="key key-operator" type="button" data-operator="÷" aria-label="割る">÷</button>
 
           <button class="key" type="button" data-number="7">7</button>
           <button class="key" type="button" data-number="8">8</button>
           <button class="key" type="button" data-number="9">9</button>
-          <button class="key key-operator" type="button" data-operator="×" aria-label="掛ける">×</button>
+          <button class="key key-operator" type="button" data-operator="/" aria-label="Divide">/</button>
 
           <button class="key" type="button" data-number="4">4</button>
           <button class="key" type="button" data-number="5">5</button>
           <button class="key" type="button" data-number="6">6</button>
-          <button class="key key-operator" type="button" data-operator="-" aria-label="引く">−</button>
+          <button class="key key-operator" type="button" data-operator="*" aria-label="Multiply">*</button>
 
           <button class="key" type="button" data-number="1">1</button>
           <button class="key" type="button" data-number="2">2</button>
           <button class="key" type="button" data-number="3">3</button>
-          <button class="key key-operator" type="button" data-operator="+" aria-label="足す">+</button>
+          <button class="key key-operator" type="button" data-operator="-" aria-label="Subtract">-</button>
 
-          <button class="key key-wide" type="button" data-number="0">0</button>
+          <button class="key" type="button" data-number="0">0</button>
           <button class="key" type="button" data-action="decimal">.</button>
           <button class="key key-equals" type="button" data-action="equals">=</button>
+          <button class="key key-operator" type="button" data-operator="+" aria-label="Add">+</button>
         </div>
       </section>
     </main>

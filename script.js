@@ -8,13 +8,14 @@ const state = {
   operator: null,
   waitingForNext: false,
   justCalculated: false,
+  note: "",
 };
 
 const operations = {
   "+": (a, b) => a + b,
   "-": (a, b) => a - b,
-  "×": (a, b) => a * b,
-  "÷": (a, b) => (b === 0 ? NaN : a / b),
+  "*": (a, b) => a * b,
+  "/": (a, b) => (b === 0 ? NaN : a / b),
 };
 
 function formatNumber(value) {
@@ -32,6 +33,11 @@ function updateDisplay() {
   const numericValue = Number(state.current);
   display.value = state.current === "Error" ? "Error" : formatNumber(numericValue);
 
+  if (state.note) {
+    expression.textContent = state.note;
+    return;
+  }
+
   if (state.operator && state.previous !== null) {
     expression.textContent = `${formatNumber(state.previous)} ${state.operator}`;
     return;
@@ -40,12 +46,17 @@ function updateDisplay() {
   expression.innerHTML = "&nbsp;";
 }
 
+function clearNote() {
+  state.note = "";
+}
+
 function reset() {
   state.current = "0";
   state.previous = null;
   state.operator = null;
   state.waitingForNext = false;
   state.justCalculated = false;
+  state.note = "";
   updateDisplay();
 }
 
@@ -56,9 +67,12 @@ function inputNumber(number) {
     state.operator = null;
     state.justCalculated = false;
     state.waitingForNext = false;
+    clearNote();
     updateDisplay();
     return;
   }
+
+  clearNote();
 
   if (state.waitingForNext) {
     state.current = number;
@@ -77,11 +91,14 @@ function inputDecimal() {
     state.operator = null;
     state.justCalculated = false;
     state.waitingForNext = false;
+    clearNote();
   } else if (state.waitingForNext) {
     state.current = "0.";
     state.waitingForNext = false;
+    clearNote();
   } else if (!state.current.includes(".")) {
     state.current += ".";
+    clearNote();
   }
 
   display.value = state.current;
@@ -100,6 +117,7 @@ function calculate() {
   state.operator = null;
   state.waitingForNext = true;
   state.justCalculated = true;
+  clearNote();
   updateDisplay();
 }
 
@@ -117,6 +135,7 @@ function chooseOperator(operator) {
   state.operator = operator;
   state.waitingForNext = true;
   state.justCalculated = false;
+  clearNote();
   updateDisplay();
 }
 
@@ -126,6 +145,7 @@ function toggleSign() {
   }
 
   state.current = state.current.startsWith("-") ? state.current.slice(1) : `-${state.current}`;
+  clearNote();
   updateDisplay();
 }
 
@@ -135,6 +155,24 @@ function percent() {
   }
 
   state.current = String(Number.parseFloat((Number(state.current) / 100).toPrecision(12)));
+  clearNote();
+  updateDisplay();
+}
+
+function squareRoot() {
+  if (state.current === "Error") {
+    return;
+  }
+
+  const input = Number(state.current);
+  const result = input < 0 ? NaN : Math.sqrt(input);
+
+  state.note = `sqrt(${formatNumber(input)})`;
+  state.current = Number.isFinite(result) ? String(Number.parseFloat(result.toPrecision(12))) : "Error";
+  state.previous = null;
+  state.operator = null;
+  state.waitingForNext = true;
+  state.justCalculated = true;
   updateDisplay();
 }
 
@@ -144,6 +182,7 @@ function handleAction(action) {
   if (action === "equals") calculate();
   if (action === "toggle-sign") toggleSign();
   if (action === "percent") percent();
+  if (action === "sqrt") squareRoot();
 }
 
 function flashKey(selector) {
@@ -177,8 +216,8 @@ window.addEventListener("keydown", (event) => {
   }
 
   const operatorMap = {
-    "/": "÷",
-    "*": "×",
+    "/": "/",
+    "*": "*",
     "-": "-",
     "+": "+",
   };
@@ -215,8 +254,15 @@ window.addEventListener("keydown", (event) => {
     return;
   }
 
+  if (key.toLowerCase() === "r") {
+    squareRoot();
+    flashKey('[data-action="sqrt"]');
+    return;
+  }
+
   if (key === "Backspace") {
     state.current = state.current.length > 1 ? state.current.slice(0, -1) : "0";
+    clearNote();
     updateDisplay();
   }
 });
